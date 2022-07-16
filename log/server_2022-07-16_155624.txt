@@ -1,0 +1,12 @@
+2022-07-16 15:56:24 | [t] connected (Normal mode: 13W, Saving mode: 3W)
+2022-07-16 15:56:24 | Device [t] set mode to [off] ~ using 0W
+2022-07-16 15:56:24 | [trgr] connected (Normal mode: 13W, Saving mode: 3W)
+2022-07-16 15:56:24 | Device [trgr] set mode to [off] ~ using 0W
+2022-07-16 15:56:24 | Device [t] change mode to [normal], comsume 13W
+
+2022-07-16 15:56:24 | System power using: 13W
+
+2022-07-16 15:56:24 | Device [trgr] change mode to [normal], comsume 13W
+
+2022-07-16 15:56:24 | System power using: 26W
+

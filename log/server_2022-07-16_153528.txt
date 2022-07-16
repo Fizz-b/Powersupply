@@ -1,0 +1,42 @@
+2022-07-16 15:35:28 | [tv] connected (Normal mode: 500W, Saving mode: 1W)
+2022-07-16 15:35:28 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:35:28 | [AIR] connected (Normal mode: 500W, Saving mode: 1W)
+2022-07-16 15:35:28 | Device [AIR] set mode to [off] ~ using 0W
+2022-07-16 15:35:28 | Device [tv] disconnected
+
+
+2022-07-16 15:35:28 | System power using: 0W
+
+2022-07-16 15:35:28 | Device [] disconnected
+
+
+2022-07-16 15:35:28 | System power using: 0W
+
+2022-07-16 15:35:28 | [tv] connected (Normal mode: 50W, Saving mode: 1W)
+2022-07-16 15:35:28 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:35:28 | Device [tv] disconnected
+
+
+2022-07-16 15:35:28 | System power using: 0W
+
+2022-07-16 15:35:28 | [tv] connected (Normal mode: 53W, Saving mode: 3W)
+2022-07-16 15:35:28 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:35:28 | [air] connected (Normal mode: 3W, Saving mode: 3W)
+2022-07-16 15:35:28 | Device [air] set mode to [off] ~ using 0W
+2022-07-16 15:35:28 | Device [tv] disconnected
+
+
+2022-07-16 15:35:28 | System power using: 0W
+
+2022-07-16 15:35:28 | [air] connected (Normal mode: 4W, Saving mode: 4W)
+2022-07-16 15:35:28 | Device [air] set mode to [off] ~ using 0W
+2022-07-16 15:35:28 | Device [air] disconnected
+
+
+2022-07-16 15:35:28 | System power using: 0W
+
+2022-07-16 15:35:28 | Device [] disconnected
+
+
+2022-07-16 15:35:28 | System power using: 0W
+

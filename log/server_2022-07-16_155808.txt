@@ -1,0 +1,14 @@
+2022-07-16 15:58:08 | [tv] connected (Normal mode: 500W, Saving mode: 3W)
+2022-07-16 15:58:08 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:58:08 | [air] connected (Normal mode: 3434W, Saving mode: 43W)
+2022-07-16 15:58:08 | Device [air] set mode to [off] ~ using 0W
+2022-07-16 15:58:08 | Device [tv] disconnected
+
+
+2022-07-16 15:58:08 | System power using: 0W
+
+2022-07-16 15:58:08 | Device [] disconnected
+
+
+2022-07-16 15:58:08 | System power using: 0W
+

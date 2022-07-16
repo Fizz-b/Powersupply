@@ -1,0 +1,35 @@
+2022-07-16 16:24:41 | [tv] connected (Normal mode: 3W, Saving mode: 3W)
+2022-07-16 16:24:41 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 16:24:41 | Device [tv] disconnected
+
+
+2022-07-16 16:24:41 | System power using: 0W
+
+2022-07-16 16:24:41 | [air] connected (Normal mode: 434W, Saving mode: 3W)
+2022-07-16 16:24:41 | Device [air] set mode to [off] ~ using 0W
+2022-07-16 16:24:41 | Device [air] disconnected
+
+
+2022-07-16 16:24:41 | System power using: 0W
+
+2022-07-16 16:24:41 | [tv] connected (Normal mode: 343W, Saving mode: 4W)
+2022-07-16 16:24:41 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 16:24:41 | [air] connected (Normal mode: 343W, Saving mode: 3W)
+2022-07-16 16:24:41 | Device [air] set mode to [off] ~ using 0W
+2022-07-16 16:24:41 | Device [air] disconnected
+
+
+2022-07-16 16:24:41 | System power using: 0W
+
+2022-07-16 16:24:41 | Device [tv] disconnected
+
+
+2022-07-16 16:24:41 | System power using: 0W
+
+2022-07-16 16:24:41 | [elcetor] connected (Normal mode: 43W, Saving mode: 3W)
+2022-07-16 16:24:41 | Device [elcetor] set mode to [off] ~ using 0W
+2022-07-16 16:24:41 | Device [elcetor] disconnected
+
+
+2022-07-16 16:24:41 | System power using: 0W
+

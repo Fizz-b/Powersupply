@@ -1,0 +1,146 @@
+2022-07-16 15:07:59 | [tv] connected (Normal mode: 5000W, Saving mode: 1W)
+2022-07-16 15:07:59 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | Device [tv] change mode to [normal], comsume 5000W
+
+2022-07-16 15:07:59 | WARNING!!! Over threshold, power comsuming: 5000W
+
+2022-07-16 15:07:59 | DANGER!!! System overload, power comsuming: 5000W
+
+2022-07-16 15:07:59 | System power using: 5000W
+
+2022-07-16 15:07:59 | Device [tv] change mode to [limited], comsume 1W
+
+2022-07-16 15:07:59 | System power using: 1W
+
+2022-07-16 15:07:59 | Device [tv] change mode to [normal], comsume 5000W
+
+2022-07-16 15:07:59 | WARNING!!! Over threshold, power comsuming: 5000W
+
+2022-07-16 15:07:59 | DANGER!!! System overload, power comsuming: 5000W
+
+2022-07-16 15:07:59 | System power using: 5000W
+
+2022-07-16 15:07:59 | Device [tv] change mode to [limited], comsume 1W
+
+2022-07-16 15:07:59 | System power using: 1W
+
+2022-07-16 15:07:59 | WARNING!!! Over threshold, power comsuming: 5000W
+
+2022-07-16 15:07:59 | Device [tv] change mode to [normal], comsume 5000W
+
+2022-07-16 15:07:59 | DANGER!!! System overload, power comsuming: 5000W
+
+2022-07-16 15:07:59 | System power using: 5000W
+
+2022-07-16 15:07:59 | Device [tv] change mode to [limited], comsume 1W
+
+2022-07-16 15:07:59 | System power using: 1W
+
+2022-07-16 15:07:59 | Device [tv] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 0W
+
+2022-07-16 15:07:59 | [tv] connected (Normal mode: 2000W, Saving mode: 2000W)
+2022-07-16 15:07:59 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | [air condition] connected (Normal mode: 3000W, Saving mode: 3000W)
+2022-07-16 15:07:59 | Device [air condition] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | Device [tv] change mode to [normal], comsume 2000W
+
+2022-07-16 15:07:59 | System power using: 2000W
+
+2022-07-16 15:07:59 | Device [air condition] change mode to [normal], comsume 3000W
+
+2022-07-16 15:07:59 | WARNING!!! Over threshold, power comsuming: 5000W
+
+2022-07-16 15:07:59 | DANGER!!! System overload, power comsuming: 5000W
+
+2022-07-16 15:07:59 | System power using: 5000W
+
+2022-07-16 15:07:59 | Device [tv] change mode to [limited], comsume 2000W
+
+2022-07-16 15:07:59 | System power using: 5000W
+
+2022-07-16 15:07:59 | Device [air condition] change mode to [limited], comsume 3000W
+
+2022-07-16 15:07:59 | System power using: 5000W
+
+2022-07-16 15:07:59 | Device [air condition] change mode to [off], comsume 0W
+
+2022-07-16 15:07:59 | System power using: 2000W
+
+2022-07-16 15:07:59 | Device [tv] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 2000W
+
+2022-07-16 15:07:59 | Device [] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 0W
+
+2022-07-16 15:07:59 | [air condition] connected (Normal mode: 5000W, Saving mode: 200W)
+2022-07-16 15:07:59 | Device [air condition] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | [tv] connected (Normal mode: 2000W, Saving mode: 200W)
+2022-07-16 15:07:59 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | Device [tv] change mode to [normal], comsume 2000W
+
+2022-07-16 15:07:59 | System power using: 2000W
+
+2022-07-16 15:07:59 | Device [air condition] change mode to [normal], comsume 5000W
+
+2022-07-16 15:07:59 | WARNING!!! Over threshold, power comsuming: 7000W
+
+2022-07-16 15:07:59 | DANGER!!! System overload, power comsuming: 7000W
+
+2022-07-16 15:07:59 | System power using: 7000W
+
+2022-07-16 15:07:59 | Device [air condition] change mode to [limited], comsume 200W
+
+2022-07-16 15:07:59 | System power using: 2200W
+
+2022-07-16 15:07:59 | Device [air condition] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 2000W
+
+2022-07-16 15:07:59 | Device [] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 2000W
+
+2022-07-16 15:07:59 | [tv] connected (Normal mode: 500W, Saving mode: 50W)
+2022-07-16 15:07:59 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | Device [] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 0W
+
+2022-07-16 15:07:59 | [tv] connected (Normal mode: 50454W, Saving mode: 1W)
+2022-07-16 15:07:59 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | Device [tv] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 0W
+
+2022-07-16 15:07:59 | [air condition] connected (Normal mode: 500W, Saving mode: 1W)
+2022-07-16 15:07:59 | Device [air condition] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | [tv] connected (Normal mode: 200W, Saving mode: 250W)
+2022-07-16 15:07:59 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | Device [air condition] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 0W
+
+2022-07-16 15:07:59 | Device [] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 0W
+
+2022-07-16 15:07:59 | [air condition] connected (Normal mode: 500W, Saving mode: 1W)
+2022-07-16 15:07:59 | Device [air condition] set mode to [off] ~ using 0W
+2022-07-16 15:07:59 | Device [air condition] disconnected
+
+
+2022-07-16 15:07:59 | System power using: 0W
+

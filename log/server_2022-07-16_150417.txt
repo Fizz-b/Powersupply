@@ -1,0 +1,10 @@
+2022-07-16 15:04:17 | [tv] connected (Normal mode: 5000W, Saving mode: 1W)
+2022-07-16 15:04:17 | Device [tv] set mode to [off] ~ using 0W
+2022-07-16 15:04:17 | Device [tv] change mode to [normal], comsume 5000W
+
+2022-07-16 15:04:17 | WARNING!!! Over threshold, power comsuming: 5000W
+
+2022-07-16 15:04:17 | DANGER!!! System overload, power comsuming: 5000W
+
+2022-07-16 15:04:17 | System power using: 5000W
+
