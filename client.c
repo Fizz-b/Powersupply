@@ -210,7 +210,7 @@ int main(int argc, char const *argv[])
 			printf("ERROR: pthread\n");
 			return EXIT_FAILURE;
 		}  */
-
+       
 		do
 		{
 			sleep(0.5);
@@ -241,14 +241,15 @@ int main(int argc, char const *argv[])
 			}
 			if (choice == '3')
 			{
-				printf("er");
+				
 				send(client_sock, "kill", 5, 0);
 				break;
 			}
 			send(client_sock, &choice, 1, 0);
 			// neu nhan ve tin hieu  normal thi continue neu co warning thresh hold thi phai canh bao
 			// recv = OK continue ;      else print warning
-		
+		               
+					   /*
 						   bzero(buff, 8192);
 						   bytes_received = recv(client_sock, buff, BUFF_SIZE - 1, 0);
 						   if (bytes_received <= 0)
@@ -262,7 +263,7 @@ int main(int argc, char const *argv[])
 							   buff[bytes_received] = '\0';
 							   printf("Receive:%s\n", buff);
 						   }   
-
+                              */
 		} while (1);
 	}
 
