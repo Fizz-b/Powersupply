@@ -249,38 +249,21 @@ int main(int argc, char const *argv[])
 			// neu nhan ve tin hieu  normal thi continue neu co warning thresh hold thi phai canh bao
 			// recv = OK continue ;      else print warning
 
-			bzero(buff, 8192);
-			//integer
-			int re=2;
-			bytes_received = recv(client_sock, &re,sizeof(re), 0);
-			if (bytes_received <= 0)
-			{
-				// if DISCONNECT
-				printf("\nServer shuted down.\n");
-				continue;
-			}
-			else
-			{
-				//buff[bytes_received] = '\0';
-				
-				//int a = buff[0] - '0';
-				printf("Receive:%d\n", re);
-				
-				if (re >= 4500)
+			/*
+				bzero(buff, 8192);
+				bytes_received = recv(client_sock, buff, BUFF_SIZE - 1, 0);
+				if (bytes_received <= 0)
 				{
-					printf("The threshold is exceeded 4500W.Power consumming:%d\n", re);
-				}
-				if (re >= 5000)
-				{
-					printf("Over supply,power consumming:%d", re);
+					// if DISCONNECT
+					printf("\nServer shuted down.\n");
+					continue;
 				}
 				else
 				{
-					printf(
-						"Power Consuming:%d\n", re);
-				} 
-			}
-
+					buff[bytes_received] = '\0';
+					printf("Receive:%s\n", buff);
+				}
+				   */
 		} while (1);
 	}
 

@@ -1,10 +1,4 @@
-//////////////////////////////////////////////////////////
-//  \    /\   Simple power supply program - server side //
-//   )  ( ')                                            //
-//  (  /  )                                             //
-//   \(__)|                                          N. //
-//////////////////////////////////////////////////////////
-// TODO: thieu phan viet log cho moi thiet bi
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,7 +37,7 @@ int bytes_sent, bytes_received;
 struct sockaddr_in server;
 struct sockaddr_in client;
 int sin_size;
-char use_mode[][10] = {"off", "normal", "limited"};
+char use_mode[][10] = {"off", "normal", "saving"};
 key_t key_s = 8888, key_d = 1234, key_m = 5678; // system info, device storage, msg_t queue
 int shmid_s, shmid_d, msqid;					// system info, device storage, msg_t queue
 FILE *log_server;
@@ -56,7 +50,7 @@ typedef struct
 	int supply_over;
 	int reset;
 } powerSystem_t;
-powerSystem_t  *powerSystem;
+powerSystem_t *powerSystem;
 
 // device struct
 typedef struct
@@ -83,16 +77,13 @@ typedef struct
 // write log to server
 void printServer(char *content)
 {
-	
-	
-
 	char time_log[255];
 	time_t t = time(NULL);
 	struct tm *now = localtime(&t);
 	strftime(time_log, sizeof(time_log), "%Y-%m-%d %H:%M:%S", now);
 	char s[1000];
-	sprintf(s, "%s : %5d|%s", time_log,getpid(),content);
-	printf("%s",s);
+	sprintf(s, "%s : %5d|%s", time_log, getpid(), content);
+	printf("%s", s);
 }
 
 void sigHandleSIGINT()
@@ -104,86 +95,6 @@ void sigHandleSIGINT()
 	kill(0, SIGKILL);
 	exit(0);
 }
-
-/*PowerSupply writes power supply information on the equipment. 
-              notifies eleEquip the power supply and the status. */
-void powerSupply_handle(int conne_sock)
-{
-	// check if this is first time client sent
-	int is_first_msg_t = 1;
-	//////////////////////////////
-	// Connect to shared memory //
-	//////////////////////////////
-	if ((powerSystem = (powerSystem_t *)shmat(shmid_s, (void *)0, 0)) == (void *)-1)
-	{
-		printServer("shmat() failed\n");
-		exit(1);
-	}
-
-	while (1)
-	{
-		///////////////////
-		// listen on tcp //
-		///////////////////
-		bytes_received = recv(conne_sock, recv_data, BUFF_SIZE - 1, 0);
-		//TO DO: tra ve thong tin cho client
-       
-
-		if (bytes_received <= 0)
-		{
-			// if DISCONNECT
-			// send msg_t to powSupplyInfoAccess
-			msg_t sys_msg;
-			sys_msg.mtype = 2;
-			sprintf(sys_msg.mtext, "d|%d|", getpid()); // n for DISS
-			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
-
-			powerSupply_count=powerSupply_count-1;
-			send(conne_sock, "exit", 5, 0);
-			// kill this process
-			kill(getpid(), SIGKILL);
-			break;
-		}
-		recv_data[bytes_received] = '\0';
-	
-		
-		if (strcmp(recv_data, "kill") == 0)
-		{
-			msg_t sys_msg;
-			sys_msg.mtype = 2;
-			sprintf(sys_msg.mtext, "d|%d|", getpid()); // n for DISS
-			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
-			powerSupply_count = powerSupply_count - 1;
-								// kill this process
-						 		kill(getpid(), SIGKILL);
-								send(conne_sock, "exit", 5, 0);
-								break;
-		}
-		else
-		{
-			// if receive msg_t from client
-			send(conne_sock, "ok", 3, 0);
-			if (is_first_msg_t)
-			{
-				is_first_msg_t = 0;
-				// send device info to powSupplyInfoAccess
-				msg_t sys_msg;
-				sys_msg.mtype = 2;
-				sprintf(sys_msg.mtext, "n|%d|%s|%d|", getpid(), recv_data, conne_sock); // n for NEW
-				msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
-			}
-			else
-			{
-				// if not first time client send
-				// send mode to powSupplyInfoAccess
-				msg_t sys_msg;
-				sys_msg.mtype = 2;
-				sprintf(sys_msg.mtext, "m|%d|%s|", getpid(), recv_data); // m for MODE
-				msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
-			}
-		}
-	} // endwhile
-} // end function powerSupply_handle
 
 void connectMng_handler()
 {
@@ -256,8 +167,8 @@ void connectMng_handler()
 			// in parent
 			close(conn_sock);
 			powerSupply_count++;
-			bzero(buffer,2048);
-			sprintf(buffer,"A device connected, connectMng forked new process powerSupply --- pid: %d.\n", powerSupply);
+			bzero(buffer, 2048);
+			sprintf(buffer, "A device connected, connectMng forked new process powerSupply --- pid: %d.\n", powerSupply);
 			printServer(buffer);
 		}
 	} // end communication
@@ -265,7 +176,109 @@ void connectMng_handler()
 	close(listen_sock);
 } // end function connectMng_handler
 
-/* reads and writes powerSupplyEquipInfo or powerSupplySystemInfo 
+// TODO: tk gui tra message neu qua tai neu ok thi ms tiep tuc
+/*PowerSupply writes power supply information on the equipment.
+			  notifies eleEquip the power supply and the status. */
+void powerSupply_handle(int conn_sock)
+{
+	// check if this is first time client sent
+	int is_first_msg_t = 1;
+	//////////////////////////////
+	// Connect to shared memory //
+	//////////////////////////////
+	if ((powerSystem = (powerSystem_t *)shmat(shmid_s, (void *)0, 0)) == (void *)-1)
+	{
+		printServer("shmat() failed\n");
+		exit(1);
+	}
+
+	while (1)
+	{
+		///////////////////
+		// listen on tcp //
+		///////////////////
+		bytes_received = recv(conn_sock, recv_data, BUFF_SIZE - 1, 0);
+		// TO DO: tra ve thong tin cho client
+
+		if (bytes_received <= 0)
+		{
+			// if DISCONNECT
+			// send msg_t to powSupplyInfoAccess
+			msg_t sys_msg;
+			sys_msg.mtype = 2;
+			sprintf(sys_msg.mtext, "d|%d|", getpid()); // n for DISS
+			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+
+			powerSupply_count = powerSupply_count - 1;
+			// send(conn_sock, "exit", 5, 0);
+			//  kill this process
+			kill(getpid(), SIGKILL);
+			break;
+		}
+		recv_data[bytes_received] = '\0';
+
+		if (strcmp(recv_data, "kill") == 0)
+		{
+			msg_t sys_msg;
+			sys_msg.mtype = 2;
+			sprintf(sys_msg.mtext, "d|%d|", getpid()); // n for DISS
+			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+			powerSupply_count = powerSupply_count - 1;
+			// kill this process
+			kill(getpid(), SIGKILL);
+			// send(conn_sock, "exit", 5, 0);
+			break;
+		}
+		else
+		{
+
+			// if receive msg_t from client
+			// send(conn_sock, "ok", 3, 0);
+			if (is_first_msg_t)
+			{
+				is_first_msg_t = 0;
+				// send device info to powSupplyInfoAccess
+				msg_t sys_msg;
+				sys_msg.mtype = 2;
+				sprintf(sys_msg.mtext, "n|%d|%s|%d|", getpid(), recv_data, conn_sock); // n for NEW
+				msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+			}
+			else
+			{
+				// if not first time client send
+				// send mode to powSupplyInfoAccess
+				msg_t sys_msg;
+				sys_msg.mtype = 2;
+				sprintf(sys_msg.mtext, "m|%d|%s|", getpid(), recv_data); // m for MODE
+				msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+			}
+		}
+
+		/*
+	   int f=0;
+	   msg_t got_msg;
+
+	   if (msgrcv(msqid, &got_msg, MSG_SIZE, 1, 0) == -1)
+	   {
+		   printServer("msgrcv() error");
+		   exit(1);
+	   }
+
+	   // header = 's' => Write log to server
+	   if (got_msg.mtext[0] == 'p')
+	   {
+		   char buff[MSG_SIZE];
+		   // extract from msg_t
+		   sscanf(got_msg.mtext, "%*c|%s|", buff);
+		   send(conn_sock, buff, strlen(buff), 0);
+		   f=1;
+	   }*/
+		// send(conn_sock, "ok", 3, 0);
+
+	} // endwhile
+} // end function powerSupply_handle
+
+/* reads and writes powerSupplyEquipInfo or powerSupplySystemInfo
    according to the demand of another process. */
 void powSupplyInfoAccess_handler()
 {
@@ -315,7 +328,7 @@ void powSupplyInfoAccess_handler()
 				   &devices[no].use_power[2],
 				   &devices[no].conn_sock);
 			devices[no].mode = 0;
-			
+
 			printServer("--- Connected device info ---\n");
 			bzero(buffer, 2048);
 			sprintf(buffer, "      Device: %s\n", devices[no].name);
@@ -332,16 +345,11 @@ void powSupplyInfoAccess_handler()
 			bzero(buffer, 2048);
 			sprintf(buffer, "      Used mode: %s\n", use_mode[devices[no].mode]);
 			printServer(buffer);
-			//printServer("      Device: %s\n", devices[no].name);
-			//printServer("      Normal mode: %dW\n", devices[no].use_power[1]);
-			//printServer("      Saving mode: %dW\n", devices[no].use_power[2]);
-			//printServer("      Connect socket: %d\n", devices[no].conn_sock);
-			//printServer("      Used mode: %s\n", use_mode[devices[no].mode]);
+
 			printServer("-----------------------------\n\n");
 			bzero(buffer, 2048);
 			sprintf(buffer, "System power using: %dW\n", powerSystem->current_power);
 			printServer(buffer);
-			//printServer("System power using: %dW\n", powerSystem->current_power);
 
 			// send msg_t to logWrite
 			msg_t sys_msg;
@@ -360,7 +368,7 @@ void powSupplyInfoAccess_handler()
 		if (got_msg.mtext[0] == 'm')
 		{
 			int no, temp_pid, temp_mode;
-            // read ignore first char
+			// read ignore first char
 			sscanf(got_msg.mtext, "%*c|%d|%d|", &temp_pid, &temp_mode);
 
 			for (no = 0; no < MAX_DEVICE; no++)
@@ -382,7 +390,7 @@ void powSupplyInfoAccess_handler()
 			printServer(temp);
 			sprintf(sys_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
-            
+
 			sleep(1);
 			sprintf(temp, "System power using: %dW\n", powerSystem->current_power);
 			printServer(temp);
@@ -401,41 +409,48 @@ void powSupplyInfoAccess_handler()
 			sys_msg.mtype = 1;
 			char temp[MSG_SIZE];
 
-			sprintf(temp, "Device [%s] disconnected\n\n", devices[no].name);
-
+			int found = 0;
 			for (no = 0; no < MAX_DEVICE; no++)
 			{
-				if (devices[no].pid == temp_pid)
+				if (devices[no].pid != 0)
 				{
-					printServer(temp);
-					devices[no].pid = 0;
-					strcpy(devices[no].name, "");
-					devices[no].use_power[0] = 0;
-					devices[no].use_power[1] = 0;
-					devices[no].use_power[2] = 0;
-					devices[no].mode = 0;
-					break;
+					if (devices[no].pid == temp_pid)
+					{
+						sprintf(temp, "Device [%s] disconnected\n\n", devices[no].name);
+						printServer(temp);
+						devices[no].pid = 0;
+						strcpy(devices[no].name, "");
+						devices[no].use_power[0] = 0;
+						devices[no].use_power[1] = 0;
+						devices[no].use_power[2] = 0;
+						devices[no].mode = 0;
+						found = 1;
+						break;
+					}
 				}
-				else
-				{
-					printServer("Error! Device not found\n\n");
-				}
+			}
+			if (found == 0)
+			{
+				printServer("Error! Device not found\n\n");
 			}
 			sprintf(sys_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
 
 			sprintf(temp, "System power using: %dW\n", powerSystem->current_power);
-			printServer( temp);
+			printServer(temp);
 			sprintf(sys_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
 		}
-
-	} 
-} 
-
-/*ElePowerCtrl controls limitation/dismantling of control 
+	}
+}
+double what_time_is_it()
+{
+	struct timespec now;
+	clock_gettime(CLOCK_REALTIME, &now);
+	return now.tv_sec + now.tv_nsec * 1e-9;
+}
+/*ElePowerCtrl controls limitation/dismantling of control
 of the power supply by changing powerSupplySystemInfo.*/
-
 void elePowerCtrl_handler()
 {
 	//////////////////////////////
@@ -454,7 +469,7 @@ void elePowerCtrl_handler()
 	}
 
 	int i;
-	int check_warn_threshold = 0;
+	int warn_threshold = 0;
 
 	while (1)
 	{
@@ -466,7 +481,7 @@ void elePowerCtrl_handler()
 
 		// check threshold
 		if (powerSystem->current_power >= POWER_THRESHOLD)
-		{   // qua nguong chiu tai
+		{ // qua nguong chiu tai
 			powerSystem->supply_over = 1;
 			powerSystem->threshold_over = 1;
 		}
@@ -478,38 +493,46 @@ void elePowerCtrl_handler()
 		}
 		else
 		{
-			check_warn_threshold = 0;
+			warn_threshold = 0;
 			powerSystem->supply_over = 0;
 			powerSystem->threshold_over = 0;
 			powerSystem->reset = 0;
 		}
 
 		// WARN over threshold
-		if (powerSystem->threshold_over && !check_warn_threshold)
+		if (powerSystem->threshold_over && !warn_threshold)
 		{
-			check_warn_threshold = 1;
-              
-			// send msg_t to logWrite 
+			warn_threshold = 1;
+
+			// send msg_t to logWrite
 			msg_t sys_msg;
 			sys_msg.mtype = 1;
 			char temp[MSG_SIZE];
-		
 
-			sprintf(temp, "WARNING!!! Over threshold, power comsuming: %dW\n", powerSystem->current_power);
+			sprintf(temp, "WARNING!!! The threshold is exceeded, power comsuming: %dW\n", powerSystem->current_power);
 			printServer(temp);
 			sprintf(sys_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
 			// todo: warning
-			
-			for (int no = 0; no < MAX_DEVICE; no++)
-			{
-				if (devices[no].conn_sock != 0)
-				{
-					printf("Connsock:%d\n", devices[no].conn_sock);
-					send(devices[no].conn_sock, temp, strlen(temp), 0);
-					// phai gui lai cho connectMng de xu ly
-				}
-			}
+
+			/*
+
+		   sprintf(temp, "WARNING!!! Over threshold, power comsuming: %dW\n", powerSystem->current_power);
+		   sprintf(sys_msg.mtext, "p|%s|", temp);
+		   msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+		   */
+
+			/*
+		   for (int no = 0; no < MAX_DEVICE; no++)
+		   {
+			   if (devices[no].conn_sock != 0)
+			   {
+				   printf("Connsock:%d\n", devices[no].conn_sock);
+				   //send(devices[no].conn_sock, temp, strlen(temp), 0);
+				   write(devices[no].conn_sock, temp, strlen(temp));
+				   // phai gui lai cho connectMng de xu ly
+			   }
+		   } */
 		}
 
 		// overload
@@ -519,26 +542,26 @@ void elePowerCtrl_handler()
 			msg_t sys_msg;
 			sys_msg.mtype = 1;
 			char temp[MSG_SIZE];
-			
-			sprintf(temp, "DANGER!!! System overload, power comsuming: %dW\n", powerSystem->current_power);
+
+			sprintf(temp, "DANGER!!! Supply is exceeded, power comsuming: %dW\n", powerSystem->current_power);
 			printServer(temp);
 			sprintf(sys_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+
 			// todo: warning to all
-			
+			/*
 			for (int no = 0; no < MAX_DEVICE; no++)
 			{
-				if (devices[no].conn_sock!=0){
+				if (devices[no].conn_sock != 0)
+				{
 					printf("Connsock:%d\n", devices[no].conn_sock);
-				//send(devices[no].conn_sock, temp, strlen(temp), 0);
-					write(devices[no].conn_sock, temp, strlen(temp));
+					send(devices[no].conn_sock, temp, strlen(temp), 0);
+					// write(devices[no].conn_sock, temp, strlen(temp));
 				}
-			}
-                
-			printServer("Server reset in 10 seconds\n");
-               
+			}  */
+
+			// change all to limited
 			int no;
-			// change limited
 			for (no = 0; no < MAX_DEVICE; no++)
 			{
 				if (devices[no].mode == 1)
@@ -548,64 +571,111 @@ void elePowerCtrl_handler()
 					msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
 				}
 			}
+			sleep(2);
 
-			pid_t my_child;
-			if ((my_child = fork()) == 0)
+			// TODO : check trong vong 10s
+			printServer("Server reset in 10 seconds\n");
+			double start = what_time_is_it();
+			double time_taken;
+			int flag = 0; // flag == 0 chua xu li dc
+			do
 			{
-				// in child
-				sleep(5);
-		
-				int no;
-				for (no = MAX_DEVICE; no >=0; no--)
+				totalPower = 0;
+				for (i = 0; i < MAX_DEVICE; i++)
 				{
-					// sau 10s ngat thiet bi cuoi cung gay ra qua tai
-					// TODO : ngat thiet bi cuoi cung gay ra qua tai
-					if (devices[no].mode != 0)
-					{
-						if (powerSystem->current_power >= POWER_THRESHOLD){
-							sys_msg.mtype = 2;
-						sprintf(sys_msg.mtext, "m|%d|0|", devices[no].pid);
-						msgsnd(msqid, &sys_msg, MSG_SIZE, 0);}
-						break;
-					}
+					totalPower += devices[i].use_power[devices[i].mode];
 				}
-				kill(getpid(), SIGKILL);
-			}
-			else
-			{
-				// in parent  sau khi da on dinh
-				while (1)
-				{
-					totalPower = 0;
-					for (i = 0; i < MAX_DEVICE; i++)
-						totalPower += devices[i].use_power[devices[i].mode];
-					powerSystem->current_power = totalPower;
+				powerSystem->current_power = totalPower;
 
-					if (powerSystem->current_power < POWER_THRESHOLD)
+				if (powerSystem->current_power < POWER_THRESHOLD)
+				{
+					powerSystem->supply_over = 0;
+					bzero(buffer, 2048);
+					sprintf(buffer, "OK, power now is %d\n", powerSystem->current_power);
+					printServer(buffer);
+					// printServer("OK, power now is %d\n", powerSystem->current_power);
+					flag = 1;
+					break;
+				}
+
+				time_taken = what_time_is_it() - start;
+				printf("Time taken : %f\n", time_taken);
+				sleep(1);
+			} while (time_taken <= 10.0);
+
+			if (flag == 0)
+			{
+				pid_t my_child;
+				if ((my_child = fork()) == 0)
+				{
+					// in child
+					sleep(5);
+
+					int no;
+					for (no = MAX_DEVICE; no >= 0; no--)
 					{
-						powerSystem->supply_over = 0;
-						bzero(buffer, 2048);
-						sprintf(buffer, "OK, power now is %d\n", powerSystem->current_power);
-						printServer(buffer);
-						//printServer("OK, power now is %d\n", powerSystem->current_power);
-						kill(my_child, SIGKILL);
-						break;
+						// sau 10s ngat thiet bi cuoi cung gay ra qua tai
+						// TODO : ngat thiet bi cuoi cung gay ra qua tai
+						if (devices[no].mode != 0)
+						{
+							if (powerSystem->current_power >= POWER_THRESHOLD)
+							{
+								sys_msg.mtype = 2;
+								sprintf(sys_msg.mtext, "m|%d|0|", devices[no].pid);
+								msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+								sleep(1);
+
+								// update total power
+								int totalPower = 0;
+								for (int i = 0; i < MAX_DEVICE; i++)
+								{
+									totalPower += devices[i].use_power[devices[i].mode];
+								}
+								powerSystem->current_power = totalPower;
+							}
+							else
+								break;
+						}
+					}
+					kill(getpid(), SIGKILL);
+				}
+				else
+				{
+					// in parent  sau khi da on dinh
+					while (1)
+					{
+						totalPower = 0;
+						for (i = 0; i < MAX_DEVICE; i++)
+							totalPower += devices[i].use_power[devices[i].mode];
+						powerSystem->current_power = totalPower;
+
+						if (powerSystem->current_power < POWER_THRESHOLD)
+						{
+							powerSystem->supply_over = 0;
+							bzero(buffer, 2048);
+							sprintf(buffer, "OK, power now is %d\n", powerSystem->current_power);
+							printServer(buffer);
+							// printServer("OK, power now is %d\n", powerSystem->current_power);
+							kill(my_child, SIGKILL);
+							break;
+						}
 					}
 				}
 			}
 		}
+	}
 
-		//todo:send msg_t
-		/*
-		for (int no = 0; no < MAX_DEVICE; no++)
+	// todo:send msg_t
+	/*
+	for (int no = 0; no < MAX_DEVICE; no++)
+	{
+		if (devices[no].conn_sock != 0)
 		{
-			if (devices[no].conn_sock != 0)
-			{
-				send(devices[no].conn_sock, "it's ok", 1003, 0);
-			}
-		}*/
-	} // endwhile
-} // end function elePowerCtrl_handler
+			send(devices[no].conn_sock, "it's ok", 1003, 0);
+		}
+	}*/
+} // endwhile
+  // end function elePowerCtrl_handler
 
 void logWrite_handler()
 {
@@ -640,7 +710,7 @@ void logWrite_handler()
 	bzero(buffer, 2048);
 	sprintf(buffer, "Log server started, file is %s\n", file_name);
 	printServer(buffer);
-	//printServer("Log server started, file is %s\n", file_name);
+	// printServer("Log server started, file is %s\n", file_name);
 
 	///////////////////////////////
 	// Listen to other processes //
@@ -668,7 +738,6 @@ void logWrite_handler()
 			// write log
 			fprintf(log_server, "%s | %s\n", log_time, buff);
 		}
-		// TODO:header = 'equip' => Write log equipment
 	}
 } // end function logWrite_handler
 
@@ -761,13 +830,13 @@ int main(int argc, char const *argv[])
 	}
 	else
 	{
-		sprintf(buffer,"SERVER forked new process connectMng ------------------ pid: %d.\n", connectMng);
+		sprintf(buffer, "SERVER forked new process connectMng ------------------ pid: %d.\n", connectMng);
 		printServer(buffer);
-		sprintf(buffer,"SERVER forked new process elePowerCtrl ---------------- pid: %d.\n", elePowerCtrl);
+		sprintf(buffer, "SERVER forked new process elePowerCtrl ---------------- pid: %d.\n", elePowerCtrl);
 		printServer(buffer);
-		sprintf(buffer,"SERVER forked new process powSupplyInfoAccess --------- pid: %d.\n", powSupplyInfoAccess);
+		sprintf(buffer, "SERVER forked new process powSupplyInfoAccess --------- pid: %d.\n", powSupplyInfoAccess);
 		printServer(buffer);
-		sprintf(buffer,"SERVER forked new process logWrite -------------------- pid: %d.\n\n", logWrite);
+		sprintf(buffer, "SERVER forked new process logWrite -------------------- pid: %d.\n\n", logWrite);
 		printServer(buffer);
 		waitpid(connectMng, NULL, 0);
 		waitpid(elePowerCtrl, NULL, 0);

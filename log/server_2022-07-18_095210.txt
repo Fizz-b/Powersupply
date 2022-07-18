@@ -1,0 +1,48 @@
+2022-07-18 09:52:10 | [tv] connected (Normal mode: 2000W, Saving mode: 2000W)
+2022-07-18 09:52:10 | Device [tv] set mode to [off] ~ using 0W
+2022-07-18 09:52:10 | [3000] connected (Normal mode: 3000W, Saving mode: 3000W)
+2022-07-18 09:52:10 | Device [3000] set mode to [off] ~ using 0W
+2022-07-18 09:52:10 | Device [tv] change mode to [normal], comsume 2000W
+
+2022-07-18 09:52:10 | System power using: 2000W
+
+2022-07-18 09:52:10 | Device [3000] change mode to [normal], comsume 3000W
+
+2022-07-18 09:52:10 | WARNING!!! The threshold is exceeded, power comsuming: 5000W
+
+2022-07-18 09:52:10 | DANGER!!! Supply is exceeded, power comsuming: 5000W
+
+2022-07-18 09:52:10 | System power using: 5000W
+
+2022-07-18 09:52:10 | Device [tv] change mode to [saving], comsume 2000W
+
+2022-07-18 09:52:10 | System power using: 5000W
+
+2022-07-18 09:52:10 | Device [3000] change mode to [saving], comsume 3000W
+
+2022-07-18 09:52:10 | System power using: 5000W
+
+2022-07-18 09:52:10 | Device [3000] change mode to [off], comsume 0W
+
+2022-07-18 09:52:10 | System power using: 2000W
+
+2022-07-18 09:52:10 | Device [3000] change mode to [normal], comsume 3000W
+
+2022-07-18 09:52:10 | WARNING!!! The threshold is exceeded, power comsuming: 5000W
+
+2022-07-18 09:52:10 | DANGER!!! Supply is exceeded, power comsuming: 5000W
+
+2022-07-18 09:52:10 | System power using: 5000W
+
+2022-07-18 09:52:10 | Device [3000] change mode to [saving], comsume 3000W
+
+2022-07-18 09:52:10 | System power using: 5000W
+
+2022-07-18 09:52:10 | Device [3000] change mode to [off], comsume 0W
+
+2022-07-18 09:52:10 | System power using: 2000W
+
+2022-07-18 09:52:10 | Device [tv] change mode to [normal], comsume 2000W
+
+2022-07-18 09:52:10 | System power using: 2000W
+
