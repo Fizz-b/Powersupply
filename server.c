@@ -28,6 +28,7 @@
 ////////////////////
 // Variables list //
 ////////////////////
+int conn_sock;
 int server_port;
 pid_t connectMng, powerSupply, elePowerCtrl, powSupplyInfoAccess, logWrite;
 int powerSupply_count = 0;
@@ -156,7 +157,8 @@ void powerSupply_handle(int conn_sock)
 			break;
 		}
 		else
-		{
+		{   //TODO: gui du lieu elecpower control
+			/*
 			int totalPower = 0;
 			for (int i = 0; i < MAX_DEVICE; i++)
 			{
@@ -167,10 +169,10 @@ void powerSupply_handle(int conn_sock)
 			if (byte_sent <= 0)
 			{
 				printf("Error\n");
-			}
+			}*/
 			
 			// if receive msg_t from client
-			// send(conn_sock, "ok", 3, 0);
+			
 			if (is_first_msg_t)
 			{
 				is_first_msg_t = 0;
@@ -179,6 +181,23 @@ void powerSupply_handle(int conn_sock)
 				sys_msg.mtype = 2;
 				sprintf(sys_msg.mtext, "n|%d|%s|%d|", getpid(), recv_data, conn_sock); // n for NEW
 				msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+
+				int totalPower = 0;
+				for (int i = 0; i < MAX_DEVICE; i++)
+				{
+					if (devices[i].pid == getpid())
+					{
+						totalPower += devices[i].use_power[atoi(recv_data)];
+					}
+					else
+						totalPower += devices[i].use_power[devices[i].mode];
+				}
+				printf("Power:%d\n", totalPower);
+				int byte_sent = send(conn_sock, &totalPower, sizeof(totalPower), 0);
+				if (byte_sent <= 0)
+				{
+					printf("Error\n");
+				}
 			}
 			else
 			{
@@ -188,9 +207,25 @@ void powerSupply_handle(int conn_sock)
 				sys_msg.mtype = 2;
 				sprintf(sys_msg.mtext, "m|%d|%s|", getpid(), recv_data); // m for MODE
 				msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
+
+				int totalPower = 0;
+				for (int i = 0; i < MAX_DEVICE; i++)
+				{
+					if(devices[i].pid==getpid()){
+                        totalPower += devices[i].use_power[atoi(recv_data)];
+					}else totalPower += devices[i].use_power[devices[i].mode];
+				}
+				printf("Power:%d\n", totalPower);
+				int byte_sent = send(conn_sock, &totalPower, sizeof(totalPower), 0);
+				if (byte_sent <= 0)
+				{
+					printf("Error\n");
+				}
+
 			}
 		}
-
+		printf("Chao nhe\n");
+		//send(conn_sock, "ok", 3, 0);
 		/*
 	   int f=0;
 	   msg_t got_msg;
@@ -211,23 +246,16 @@ void powerSupply_handle(int conn_sock)
 		   f=1;
 	   }*/
 
-	   /*
-	   sleep(2);
-		int totalPower = 0;
-		for (int i = 0; i < MAX_DEVICE; i++){
-			totalPower += devices[i].use_power[devices[i].mode];}
-		printf("Power:%d\n",totalPower);
-		int byte_sent=send(conn_sock, &totalPower, sizeof(totalPower), 0);
-		if(byte_sent<=0){
-			printf("Error\n");
-		}*/
+	   
+	   //sleep(2);
+		
 
 	} // endwhile
 } // end function powerSupply_handle
 
 void connectMng_handler()
 {
-    int conn_sock;
+   
 	/////////// ////////////
 	// Connect to client //
 	///////////////////////
@@ -266,7 +294,7 @@ void connectMng_handler()
 			printServer("accept() failed\n");
 			continue;
 		}
-
+         printf("New connection:%d\n",conn_sock);
 		// if 11-th device connect to SERVER
 		if (powerSupply_count == MAX_DEVICE)
 		{
@@ -501,14 +529,22 @@ void elePowerCtrl_handler()
 
 	int i;
 	int warn_threshold = 0;
-
+    
 	while (1)
 	{
 		// get total power using
 		int totalPower = 0;
-		for (i = 0; i < MAX_DEVICE; i++)
+		for (i = 0; i < MAX_DEVICE; i++){
 			totalPower += devices[i].use_power[devices[i].mode];
+		}
 		powerSystem->current_power = totalPower;
+
+		char string[20];
+		sprintf(string, "%d", totalPower);
+		for (int i = 0; i < MAX_DEVICE; i++)
+		{
+			send(devices[i].conn_sock, string, strlen(string), 0);
+		}
 
 		// check threshold
 		if (powerSystem->current_power >= POWER_THRESHOLD)
@@ -529,7 +565,7 @@ void elePowerCtrl_handler()
 			powerSystem->threshold_over = 0;
 			powerSystem->reset = 0;
 		}
-
+        
 		// WARN over threshold
 		if (powerSystem->threshold_over && !warn_threshold)
 		{
@@ -567,6 +603,7 @@ void elePowerCtrl_handler()
 		}
 
 		// overload
+		
 		if (powerSystem->supply_over)
 		{
 			// send msg_t to logWrite

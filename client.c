@@ -18,7 +18,14 @@ void str_overwrite_stdout()
 	printf("\r%s", "> ");
 	fflush(stdout);
 }
-
+void my_handler(int s)
+{
+	send(client_sock, "kill", 5, 0);
+	printf("Caught end signal: %d\n", s);
+	close(client_sock);
+	kill(0, SIGKILL);
+	exit(1);
+}
 void menu()
 {
 	printf(
@@ -30,46 +37,54 @@ void menu()
 }
 void *lobby(void *arg)
 {
-
-	char choice = getchar();
-	getchar();
-
-	switch (choice)
+	while (1)
 	{
-	case '0':
-		printf("TURN OFF\n\n");
-		break;
-	case '1':
-		printf("NORMAL MODE\n\n");
-		break;
-	case '2':
-		printf("ELECTRIC POWER SAVING MODE\n\n");
-		break;
-	default:
-		choice = '3';
-		printf("DISCONNECTED\n");
-	}
-	if (choice == '3')
-	{
-		printf("er");
-		send(client_sock, "kill", 5, 0);
-		return;
-	}
-	send(client_sock, &choice, 1, 0);
+		str_overwrite_stdout();
+		
+			char choice = getchar();
+			getchar();
+
+			switch (choice)
+			{
+			case '0':
+				printf("TURN OFF\n\n");
+				break;
+			case '1':
+				printf("NORMAL MODE\n\n");
+				break;
+			case '2':
+				printf("ELECTRIC POWER SAVING MODE\n\n");
+				break;
+			default:
+				choice = '3';
+				printf("DISCONNECTED\n");
+			}
+			if (choice == '3')
+			{
+				printf("er");
+				send(client_sock, "kill", 5, 0);
+				break;
+			}
+			send(client_sock, &choice, 1, 0);
+		}
+	my_handler(2);
+
+	return NULL;
 }
-void my_handler(int s)
+int isNumber(char s[])
 {
-	send(client_sock, "kill", 5, 0);
-	printf("Caught end signal: %d\n", s);
-	close(client_sock);
-	kill(0, SIGKILL);
-	exit(1);
+	for (int i = 0; s[i] != '\0'; i++)
+	{
+		if (isdigit(s[i]) == 0)
+			return 0;
+	}
+	return 1;
 }
 #define BUFFER_SZ 2048
 void recv_msg_handler()
 {
 	char buff[BUFFER_SZ] = {};
-	menu();
+	//menu();
 	while (1)
 	{
 		int bytes_received = recv(client_sock, buff, BUFF_SIZE - 1, 0);
@@ -79,18 +94,39 @@ void recv_msg_handler()
 
 			if (strcmp(buff, "ok") == 0)
 			{
+				str_overwrite_stdout();
 				menu();
-			}
+			}else if (strcmp(buff, "exit") == 0){
+              break;
+			}else if(isNumber(buff))
+				{
+					// its an integer
+					int re =atoi(buff);
+					if (re >= 4500)
+					{
+						printf("The threshold is exceeded 4500W.Power consumming:%d\n", re);
+					}
+					if (re >= 5000)
+					{
+						printf("Over supply,power consumming:%d", re);
+					}
+					else
+					{
+						printf(
+							"Power Consuming:%d\n", re);
+					}
+				}
 			else
 			{
+				str_overwrite_stdout();
 				printf("%s\n", buff);
+				menu();
 			}
 
 			//	printf("%s\n", buff);
-			str_overwrite_stdout();
+			
 		}
-		else
-			continue;
+			
 	}
 }
 void trim_lf(char *arr, int length)
@@ -168,7 +204,21 @@ int main(int argc, char const *argv[])
 		close(client_sock);
 		exit(1);
 	}
+    
+	/*
+	if (pthread_create(&lobby_thread, NULL, &lobby, NULL) != 0)
+	{
+		printf("ERROR: pthread\n");
+		return EXIT_FAILURE;
+	}
 
+	if (pthread_create(&recv_msg_thread, NULL, (void *)recv_msg_handler, NULL) != 0)
+	{
+		printf("ERROR: pthread\n");
+		return EXIT_FAILURE;
+	}  */
+
+	
 	// Wait for server response
 	if (fork() == 0)
 	{
@@ -210,7 +260,7 @@ int main(int argc, char const *argv[])
 			printf("ERROR: pthread\n");
 			return EXIT_FAILURE;
 		}  */
-
+       
 		do
 		{
 			sleep(0.5);
@@ -281,8 +331,8 @@ int main(int argc, char const *argv[])
 				} 
 			}
 
-		} while (1);
-	}
+		} while (1);  
+	} 
 
 	// Step 5: Close socket
 	close(client_sock);

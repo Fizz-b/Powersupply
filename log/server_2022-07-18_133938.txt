@@ -1,0 +1,12 @@
+2022-07-18 13:39:38 | [tv] connected (Normal mode: 4900W, Saving mode: 1W)
+2022-07-18 13:39:38 | Device [tv] set mode to [off] ~ using 0W
+2022-07-18 13:39:38 | Device [tv] change mode to [normal], comsume 4900W
+
+2022-07-18 13:39:38 | WARNING!!! The threshold is exceeded, power comsuming: 4900W
+
+2022-07-18 13:39:38 | System power using: 4900W
+
+2022-07-18 13:39:38 | Device [tv] change mode to [saving], comsume 1W
+
+2022-07-18 13:39:38 | System power using: 1W
+

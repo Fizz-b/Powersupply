@@ -1,0 +1,6 @@
+2022-07-18 13:31:08 | [tv] connected (Normal mode: 4900W, Saving mode: 1W)
+2022-07-18 13:31:08 | Device [tv] set mode to [off] ~ using 0W
+2022-07-18 13:31:08 | Device [tv] change mode to [normal], comsume 4900W
+
+2022-07-18 13:31:08 | System power using: 0W
+

@@ -1,0 +1,34 @@
+2022-07-18 13:44:02 | [tv] connected (Normal mode: 4900W, Saving mode: 1W)
+2022-07-18 13:44:02 | Device [tv] set mode to [off] ~ using 0W
+2022-07-18 13:44:02 | Device [tv] change mode to [normal], comsume 4900W
+
+2022-07-18 13:44:02 | WARNING!!! The threshold is exceeded, power comsuming: 4900W
+
+2022-07-18 13:44:02 | System power using: 4900W
+
+2022-07-18 13:44:02 | [air] connected (Normal mode: 200W, Saving mode: 1W)
+2022-07-18 13:44:02 | Device [air] set mode to [off] ~ using 0W
+2022-07-18 13:44:02 | Device [air] change mode to [normal], comsume 200W
+
+2022-07-18 13:44:02 | DANGER!!! Supply is exceeded, power comsuming: 5100W
+
+2022-07-18 13:44:02 | System power using: 5100W
+
+2022-07-18 13:44:02 | Device [tv] change mode to [saving], comsume 1W
+
+2022-07-18 13:44:02 | System power using: 201W
+
+2022-07-18 13:44:02 | Device [air] change mode to [saving], comsume 1W
+
+2022-07-18 13:44:02 | System power using: 2W
+
+2022-07-18 13:44:02 | Device [tv] disconnected
+
+
+2022-07-18 13:44:02 | System power using: 1W
+
+2022-07-18 13:44:02 | Device [air] disconnected
+
+
+2022-07-18 13:44:02 | System power using: 0W
+

@@ -1,8 +1,0 @@
-2022-07-18 09:37:34 | [tv] connected (Normal mode: 2000W, Saving mode: 2000W)
-2022-07-18 09:37:34 | Device [tv] set mode to [off] ~ using 0W
-2022-07-18 09:37:34 | [air] connected (Normal mode: 3000W, Saving mode: 3000W)
-2022-07-18 09:37:34 | Device [air] set mode to [off] ~ using 0W
-2022-07-18 09:37:34 | Device [tv] change mode to [normal], comsume 2000W
-
-2022-07-18 09:37:34 | System power using: 2000W
-
