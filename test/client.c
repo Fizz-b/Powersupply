@@ -14,8 +14,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 
-
-#define MAX_CLIENTS 100
+#define MAX_CLIENTS 10
 #define BUFFER_SZ 2048
 #define NAME_LEN 32
 
@@ -24,9 +23,8 @@ int sockfd = 0;
 char name[NAME_LEN]; // playerName
 int player = 1;
 
-pthread_t lobby_thread;     // send message thread
-pthread_t recv_msg_thread;  // recv msg thread
-
+pthread_t lobby_thread;    // send message thread
+pthread_t recv_msg_thread; // recv msg thread
 
 char ip[1000];
 int port;
@@ -57,7 +55,7 @@ void flashScreen()
 void my_handler(int s)
 {
 
-    flag=1;
+    flag = 1;
     send(sockfd, "kill", 5, 0);
     printf("Caught end signal: %d\n", s);
     close(sockfd);
@@ -73,19 +71,11 @@ void menu()
         "1. Normal mode\n"
         "2. Electric power saving mode\n"
         "(Choose 0,1 or 2, others to disconnect):\n");
-        
 }
-
-
-
-
-
-
 
 void *lobby(void *arg)
 {
-    char buffer[BUFFER_SZ] = {};
-    char uname[100], pass[100];
+   
     while (1)
     {
         char choice = getchar();
@@ -116,16 +106,15 @@ void *lobby(void *arg)
     }
 
     my_handler(2);
-
+    pthread_detach(pthread_self());
     return NULL;
 }
 
-
-void  *recv_msg_handler(void *arg)
+void *recv_msg_handler(void *arg)
 {
-  
+
     char rep[BUFFER_SZ] = {};
-    
+    char buff[BUFFER_SZ] = {};
     // response res;
     flashScreen();
 
@@ -133,42 +122,47 @@ void  *recv_msg_handler(void *arg)
     {
 
         int receive = recv(sockfd, rep, BUFFER_SZ, 0);
-       
+
         if (receive > 0)
         {
-            rep[receive]='\0';
-            if(strcmp(rep,"ok")==0){
+            rep[receive] = '\0';
+            if (strcmp(rep, "ok") == 0)
+            {
                 menu();
                 str_overwrite_stdout();
             }
+            else if (strcmp(rep, "kill") == 0)
+            {
+                break;
+            }
+            else if (strcmp(rep, "full") == 0)
+            {
+                printf("Max connection wait for a while\n.");
+                flag=1;
+                return;
+               
+            }
             else
-                if(strcmp(rep, "kill") == 0)
-                {
-                    break;
-                }
-                    else
-                    {
-                        printf("%s\n", rep);
-                        menu();
-                        str_overwrite_stdout();
-                    }
-                    // printf("%s---%s", status,message);
-                }
-
-            bzero(rep, BUFFER_SZ);
-            
+            {
+                printf("%s\n", rep);
+                // menu();
+                str_overwrite_stdout();
+            }
+            // printf("%s---%s", status,message);
         }
-    
+
+        bzero(rep, BUFFER_SZ);
+    }
+    pthread_detach(pthread_self());
 }
 
-int conectGame(char *ip, int port)
+int connectServer(char *ip, int port)
 {
     char buff[BUFF_SIZE];
     signal(SIGINT, my_handler);
     char name[50];   // device name
     int normal_mode; // power for normal mode
     int save_mode;   // power for saving mode
-   
 
     printf("Device name: ");
     fgets(name, BUFFER_SZ, stdin);
@@ -207,7 +201,7 @@ int conectGame(char *ip, int port)
         close(sockfd);
         exit(1);
     }
-   int  bytes_sent = send(sockfd, buff, msg_len, 0);
+    int bytes_sent = send(sockfd, buff, msg_len, 0);
     if (bytes_sent <= 0)
     {
         printf("Connection close\n");
@@ -226,7 +220,7 @@ int conectGame(char *ip, int port)
         printf("ERROR: pthread\n");
         return EXIT_FAILURE;
     }
-  
+
     while (1)
     {
         if (flag)
@@ -241,9 +235,6 @@ int conectGame(char *ip, int port)
     return 0;
 }
 
-
-
-
 int main(int argc, char **argv)
 {
     if (argc != 3)
@@ -255,7 +246,7 @@ int main(int argc, char **argv)
     //
     port = atoi(argv[2]);
     strcpy(ip, argv[1]);
-    conectGame(ip, port);
+    connectServer(ip, port);
 
-        return 0;
+    return 0;
 }
