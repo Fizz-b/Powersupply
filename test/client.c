@@ -167,7 +167,6 @@ int connectServer(char *ip, int port)
     printf("Device name: ");
     fgets(name, BUFFER_SZ, stdin);
     trim_lf(name, BUFFER_SZ);
-    // scanf("%s",name);
     printf("Normal power mode: ");
     scanf("%d", &normal_mode);
     getchar();
@@ -191,7 +190,7 @@ int connectServer(char *ip, int port)
         return EXIT_FAILURE;
     }
 
-    // send the name
+    // send the device info
     memset(buff, '\0', strlen(buff) + 1);
     sprintf(buff, "%s|%d|%d", name, normal_mode, save_mode);
     int msg_len = strlen(buff);
@@ -208,13 +207,14 @@ int connectServer(char *ip, int port)
         close(sockfd);
         exit(1);
     }
-
+    
+    // thread send
     if (pthread_create(&lobby_thread, NULL, &lobby, NULL) != 0)
     {
         printf("ERROR: pthread\n");
         return EXIT_FAILURE;
     }
-
+    // thread receive
     if (pthread_create(&recv_msg_thread, NULL, &recv_msg_handler, NULL) != 0)
     {
         printf("ERROR: pthread\n");

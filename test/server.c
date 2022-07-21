@@ -257,11 +257,11 @@ void powSupplyInfoAccess_handler(void *arg)
     msg_t got_msg;
 
     ////////////////
-    // check mail //
+    // check message //
     ////////////////
     while (1)
     {
-        // got mail!
+        // got message!
         if (msgrcv(msqid, &got_msg, MSG_SIZE, 2, 0) <= 0)
         {
             printServer("msgrcv() error");
@@ -455,7 +455,7 @@ void *elePowerCtrl_handler(void *arg)
 
         // check threshold
         if (powerSystem->current_power >= POWER_THRESHOLD)
-        { // qua nguong chiu tai
+        { 
             powerSystem->supply_over = 1;
             powerSystem->threshold_over = 1;
         }
@@ -694,7 +694,7 @@ void *connectMng_handler(void *arg)
             continue;
         }
         bzero(buffer, 2048);
-        sprintf(buffer, "A device connected, connectMng forked new process powerSupply --- pid: %d.\n", powerSupply_t);
+        sprintf(buffer, "A device connected, connectMng create new thread powerSupply --- pid: %d.\n", powerSupply_t);
         printServer(buffer);
         pthread_create(&tid, NULL, &powerSupply_handle, (void *)&connfd);
 
@@ -778,13 +778,13 @@ int main(int argc, char **argv)
     powSupplyInfoAccess_t = pthread_self();
     logWrite_t = pthread_self();
 
-    sprintf(buffer, "SERVER forked new process connectMng ------------------ thread: %ld.\n", connectMng);
+    sprintf(buffer, "SERVER create new thread connectMng ------------------ thread: %ld.\n", connectMng);
     printServer(buffer);
-    sprintf(buffer, "SERVER forked new process elePowerCtrl ---------------- thread: %ld.\n", elePowerCtrl);
+    sprintf(buffer, "SERVER create new thread elePowerCtrl ---------------- thread: %ld.\n", elePowerCtrl);
     printServer(buffer);
-    sprintf(buffer, "SERVER forked new process powSupplyInfoAccess --------- thread: %ld.\n", powSupplyInfoAccess);
+    sprintf(buffer, "SERVER create new thread powSupplyInfoAccess --------- thread: %ld.\n", powSupplyInfoAccess);
     printServer(buffer);
-    sprintf(buffer, "SERVER forked new process logWrite -------------------- thread: %ld.\n\n", logWrite);
+    sprintf(buffer, "SERVER create new thread logWrite -------------------- thread: %ld.\n\n", logWrite);
     printServer(buffer);
 
     // wait for threads to finish
