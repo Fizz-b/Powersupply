@@ -46,7 +46,7 @@ pthread_mutex_t device_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t power_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 char use_mode[][10] = {"off", "normal", "saving"};
-key_t key_s = 8888, key_d = 1234, key_m = 5678; // system info, device storage, msg_t queue
+key_t  key_m = 5678; // system info, device storage, msg_t queue
 int  msqid;                    // system info, device storage, msg_t queue
 FILE *log_server;
 char buffer[2048];
@@ -72,7 +72,7 @@ typedef struct
 device_t *devices;
 
 /**
- * msg_t struct
+ * 
  * mtype = 1 -> logWrite_handler
  * mtype = 2 -> powSupplyInfoAccess_handler
  */
@@ -253,7 +253,7 @@ int port;
    according to the demand of another process. */
 void powSupplyInfoAccess_handler(void *arg)
 {
-    // mtype = 2
+   
     msg_t got_msg;
 
     ////////////////
@@ -318,7 +318,7 @@ void powSupplyInfoAccess_handler(void *arg)
                     devices[no].use_power[2]);
             msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
 
-            sprintf(sys_msg.mtext, "s|Device [%s] set mode to [off] ~ using 0W|", devices[no].name);
+            sprintf(sys_msg.mtext, "s|Device [%s] set mode to [off] consume 0W|", devices[no].name);
             msgsnd(msqid, &sys_msg, MSG_SIZE, 0);
         }
 
@@ -426,6 +426,7 @@ void powSupplyInfoAccess_handler(void *arg)
     pthread_detach(pthread_self());
     pthread_exit(NULL);
 }
+
 double what_time_is_it()
 {
     struct timespec now;
@@ -714,7 +715,6 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    // char *ip = "127.0.0.1";
     port = atoi(argv[1]);
 
     powerSystem = (powerSystem_t *)malloc(1 * sizeof(powerSystem_t));
